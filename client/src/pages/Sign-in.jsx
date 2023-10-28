@@ -1,7 +1,8 @@
 import {Link, useNavigate} from 'react-router-dom';
 import { useState } from 'react';
-import { signInStart,signInSucess,signInFailure } from '../redux/user/userSlice';
+import { signInStart,signInSuccess,signInFailure } from '../redux/user/userSlice';
 import { useDispatch,useSelector} from 'react-redux';
+import OAuth from '../components/OAuth';
  
 
 export default function SignIn() {
@@ -31,7 +32,7 @@ try {
       dispatch(signInFailure(data));
       return;
     }
-    dispatch(signInSucess(data));
+    dispatch(signInSuccess(data));
     navigate('/dashboard');
 } catch (error) {
     dispatch(signInFailure(error));
@@ -48,6 +49,7 @@ try {
         <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:oppacity-95 disabled:opacity-80' type='submit'>
           {loading ? 'Loading' : 'SIGN IN'}
         </button>
+        <OAuth />
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Pas de compte?</p>
