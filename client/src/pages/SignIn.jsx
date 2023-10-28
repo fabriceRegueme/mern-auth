@@ -17,8 +17,6 @@ export default function SignIn() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  
-
 try {
     dispatch(signInStart());
     const res = await fetch('/api/auth/signin',{
@@ -33,13 +31,11 @@ try {
       return;
     }
     dispatch(signInSuccess(data));
-    navigate('/dashboard');
+    navigate('/');
 } catch (error) {
     dispatch(signInFailure(error));
 }
-
-
-}
+};
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
