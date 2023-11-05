@@ -42,7 +42,7 @@ export default function Profile() {
       <form className='flex flex-col gap-4'> 
         <input type='file' hidden ref={fileRef} accept='image/*' onChange={(e) => setImage(e.target.files[0])}/>
         <img 
-        src={currentUser.profilePicture}   
+        src={formData.profilePicture || currentUser.profilePicture}   
         alt="profile" 
         className='w-24 h-24 rounded-full self-center cursor-pointer object-cover mb-6'
         onClick={() => fileRef.current.click()}
