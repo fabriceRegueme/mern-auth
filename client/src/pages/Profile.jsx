@@ -1,9 +1,10 @@
 import {useSelector,useDispatch} from 'react-redux';
 import { useRef,useState,useEffect } from 'react';
 import {getDownloadURL, getStorage,ref, uploadBytesResumable} from 'firebase/storage';
+import {useNavigate} from 'react-router-dom';
 import {app} from '../firebase';
 //import e from 'express';
-import {updateUserStart,updateUserSuccess,updateUserFailure} from '../redux/user/userSlice.js'
+import {updateUserStart,updateUserSuccess,updateUserFailure,deleteUserStart,deleteUserSuccess,deleteUserFailure,signOut} from '../redux/user/userSlice.js'
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -13,9 +14,39 @@ export default function Profile() {
   const [imageError, setImageError] = useState(false);
   const [formData, SetFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const dispatch = useDispatch();
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth/signout');
+      dispatch(signOut());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleDelete = async () => { 
+      
+    try {
+      deleteUserStart(true);
+      const res = await fetch(`/api/user/delete/${currentUser._id}`,{method: 'DELETE'});
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+        setUpdateSuccess(false);
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+      setDeleteSuccess(true);
+      navigate('/signup');
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
+      setDeleteSuccess(false);
+    }
+  }
 
   const handleChange = (e) => {
     SetFormData({...formData, [e.target.id]: e.target.value})
@@ -93,11 +124,12 @@ export default function Profile() {
         <button className='mt-5 p-3 text-white bg-slate-700 font-semibold uppercase rounded-lg hover:opacity-95 disabled: opacity-80'>{loading ? 'Chargement ...' : 'Mis à jour'}</button>
       </form>
       <div className='flex justify-between mt-2'>
-        <span className='text-red-700 cursor-pointer font-semibold'>Delete account</span>
-        <span className='text-red-700 cursor-pointer font-semibold'>Sign Out</span>
+        <span className='text-red-700 cursor-pointer font-semibold' onClick={handleDelete}>Delete account</span>
+        <span className='text-red-700 cursor-pointer font-semibold' onClick={handleSignOut}>Sign Out</span>
       </div>
       <p className='text-red-700 mt-5'>{error && "Problème rencontré"}</p>
       <p className='text-green-700 mt-5'>{updateSuccess && "Profile mis à jour."}</p>
+      <p className='text-green-700 mt-5'>{deleteSuccess && "Suppression effectuée."}</p>
     </div>
   )
 }

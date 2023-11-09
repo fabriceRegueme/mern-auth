@@ -29,3 +29,16 @@ import User from '../models/user.model.js'
     }
  }
  
+
+ export const deleteUser = async (req,res,next)=> {
+    if (req.user.id !== req.params.id) {
+        return next(errorHandler(401, 'Vous n\'êtes pas autorisé à supprimé ce compte'));
+    }
+
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.status(200).json("Utilisateur supprimé");
+    } catch (error) {
+        next(error);
+    }
+ }

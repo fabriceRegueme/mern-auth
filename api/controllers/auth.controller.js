@@ -78,6 +78,6 @@ try {
 };
 
 export const signout = (req, res) => {
-    res.clearCookie('access_token').status(200).json('Signout success!');
+    res.clearCookie('access_token').status(200).json('Déconnexion effectuée!');
 };
   
